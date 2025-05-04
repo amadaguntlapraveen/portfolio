@@ -1,26 +1,34 @@
-name: Upload to S3
+name: Deploy to S3
 
 on:
   push:
     branches:
-      - main
+      - main  # or your branch name
 
 jobs:
-  upload:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1  # Update with your region
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: ap-south-1  # Change to your region
 
-    - name: Upload files to S3
-      run: |
-        # Uploading only files from the folder (not folder structure)
-        aws s3 cp . s3://cloudtechinsight/ --recursive
+      - name: Upload website files to S3
+        run: |
+          aws s3 cp ./ s3://your-bucket-name/ --recursive \
+            --exclude "*" \
+            --include "*.html" \
+            --include "*.css" \
+            --include "*.js" \
+            --include "images/*" \
+            --include "*.png" \
+            --include "*.jpg" \
+            --include "*.jpeg" \
+            --include "*.ico"
